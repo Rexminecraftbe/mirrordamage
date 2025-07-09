@@ -1,0 +1,15 @@
+name: MirrorDamage
+main: de.elia.cameraplugin.mirrordamage.MirrorDamagePlugin
+version: 1.1.0
+api-version: 1.21
+author: YourName
+
+commands:
+  damgesarmor:
+    description: Spawn/entfernt deinen Test‑ArmorStand
+    usage: /<command>
+
+permissions:
+  mirrordamage.toggle:
+    description: Erlaubt das Nutzen von /damgesarmor
+    default: true
