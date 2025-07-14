@@ -10,6 +10,9 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import java.util.EnumSet;
 
 /**
  * Transfers damage from mirror villagers to their players
@@ -18,9 +21,21 @@ import org.bukkit.projectiles.ProjectileSource;
 public class DamageTransferListener implements Listener {
 
     private final VillagerMirrorManager mirrorManager;
+    private final boolean damageArmor;
+    private final EnumSet<EntityDamageEvent.DamageCause> durabilityCauses = EnumSet.of(
+            EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+            EntityDamageEvent.DamageCause.PROJECTILE,
+            EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+            EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
+            EntityDamageEvent.DamageCause.FIRE,
+            EntityDamageEvent.DamageCause.FIRE_TICK,
+            EntityDamageEvent.DamageCause.HOT_FLOOR,
+            EntityDamageEvent.DamageCause.FALL
+    );
 
-    public DamageTransferListener(VillagerMirrorManager mirrorManager) {
+    public DamageTransferListener(VillagerMirrorManager mirrorManager, boolean damageArmor) {
         this.mirrorManager = mirrorManager;
+        this.damageArmor = damageArmor;
     }
 
     @EventHandler
@@ -44,6 +59,7 @@ public class DamageTransferListener implements Listener {
 
                 double damage = event.getFinalDamage();
                 owner.damage(damage, damager);
+                damagePlayerArmor(owner, event.getCause());
                 return;
             }
         }
@@ -80,6 +96,7 @@ public class DamageTransferListener implements Listener {
         event.setCancelled(true);
         DamageSource source = event.getDamageSource();
         owner.damage(event.getFinalDamage(), source);
+        damagePlayerArmor(owner, event.getCause());
     }
 
     /**
@@ -119,6 +136,20 @@ public class DamageTransferListener implements Listener {
                     .forEach(effect -> owner.addPotionEffect(effect, true));
             arrow.getCustomEffects()
                     .forEach(effect -> owner.addPotionEffect(effect, true));
+        }
+    }
+
+    private void damagePlayerArmor(Player player, EntityDamageEvent.DamageCause cause) {
+        if (!damageArmor || !durabilityCauses.contains(cause)) return;
+        ItemStack[] armor = player.getInventory().getArmorContents();
+        for (int i = 0; i < armor.length; i++) {
+            ItemStack item = armor[i];
+            if (item == null) continue;
+            var meta = item.getItemMeta();
+            if (meta instanceof Damageable dmg) {
+                dmg.setDamage(dmg.getDamage() + 1);
+                item.setItemMeta(meta);
+            }
         }
     }
 }

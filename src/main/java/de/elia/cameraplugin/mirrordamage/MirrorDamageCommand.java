@@ -26,10 +26,10 @@ public class MirrorDamageCommand implements CommandExecutor {
         }
 
         if (manager.removeMirror(p)) {
-            p.sendMessage("§aDein Test‑Villager wurde entfernt.");
+            p.sendMessage("§aDein Test‑Villager wurde entfernt und dein Inventar zurückgegeben.");
         } else {
             manager.spawnMirror(p);
-            p.sendMessage("§aTest‑Villager gespawnt – greif ihn an, um den Schaden zu prüfen!");
+            p.sendMessage("§aTest‑Villager gespawnt – dein Inventar wurde gesichert.");
         }
         return true;
     }
