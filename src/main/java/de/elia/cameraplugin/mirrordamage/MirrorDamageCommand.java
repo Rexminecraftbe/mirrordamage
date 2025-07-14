@@ -25,7 +25,7 @@ public class MirrorDamageCommand implements CommandExecutor {
             return true;
         }
 
-        if (manager.removeMirror(p)) {
+        if (manager.removeMirror(p, VillagerMirrorManager.ReturnMode.RESTORE)) {
             p.sendMessage("§aDein Test‑Villager wurde entfernt.");
         } else {
             manager.spawnMirror(p);

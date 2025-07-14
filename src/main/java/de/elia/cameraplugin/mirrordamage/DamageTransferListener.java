@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -18,9 +19,31 @@ import org.bukkit.projectiles.ProjectileSource;
 public class DamageTransferListener implements Listener {
 
     private final VillagerMirrorManager mirrorManager;
+    private final MirrorDamagePlugin plugin;
 
-    public DamageTransferListener(VillagerMirrorManager mirrorManager) {
+    public DamageTransferListener(VillagerMirrorManager mirrorManager, MirrorDamagePlugin plugin) {
         this.mirrorManager = mirrorManager;
+        this.plugin = plugin;
+    }
+
+    private void damageArmour(Player player, EntityDamageEvent.DamageCause cause) {
+        if (!plugin.getConfig().getBoolean("armor-takes-damage", true)) return;
+
+        switch (cause) {
+            case ENTITY_ATTACK, PROJECTILE, BLOCK_EXPLOSION, ENTITY_EXPLOSION,
+                 FIRE, FIRE_TICK, HOT_FLOOR, FALL -> {
+                for (ItemStack item : player.getInventory().getArmorContents()) {
+                    if (item == null) continue;
+                    var meta = item.getItemMeta();
+                    if (meta instanceof org.bukkit.inventory.meta.Damageable d) {
+                        d.setDamage(d.getDamage() + 1);
+                        item.setItemMeta(meta);
+                    }
+                }
+            }
+            default -> {
+            }
+        }
     }
 
     @EventHandler
@@ -33,6 +56,7 @@ public class DamageTransferListener implements Listener {
             if (owner != null) {
                 event.setCancelled(true); // keep villager intact
                 double damage = event.getFinalDamage();
+                damageArmour(owner, event.getCause());
                 owner.damage(damage, event.getDamager());
                 return;
             }
@@ -68,6 +92,7 @@ public class DamageTransferListener implements Listener {
         if (owner == null) return;
 
         event.setCancelled(true);
+        damageArmour(owner, event.getCause());
         DamageSource source = event.getDamageSource();
         owner.damage(event.getFinalDamage(), source);
     }
