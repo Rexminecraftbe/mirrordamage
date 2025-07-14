@@ -32,8 +32,18 @@ public class DamageTransferListener implements Listener {
             Player owner = mirrorManager.getPlayer(mirror);
             if (owner != null) {
                 event.setCancelled(true); // keep villager intact
+
+                // Transfer potion effects from tipped arrows
+                Entity damager = event.getDamager();
+                if (damager instanceof Arrow arrow) {
+                    arrow.getBasePotionType().getPotionEffects()
+                            .forEach(effect -> owner.addPotionEffect(effect, true));
+                    arrow.getCustomEffects()
+                            .forEach(effect -> owner.addPotionEffect(effect, true));
+                }
+
                 double damage = event.getFinalDamage();
-                owner.damage(damage, event.getDamager());
+                owner.damage(damage, damager);
                 return;
             }
         }
