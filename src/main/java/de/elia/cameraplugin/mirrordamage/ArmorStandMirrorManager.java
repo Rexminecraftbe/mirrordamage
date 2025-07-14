@@ -24,8 +24,9 @@ public class ArmorStandMirrorManager {
         removeMirror(player);  // sorgt dafür, dass nur einer existiert
 
         ArmorStand stand = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-        stand.setInvisible(true);
-        stand.setMarker(true);      // keine Hitbox
+        // sichtbar und mit Hitbox spawnen, damit er nicht sofort entfernt wird
+        stand.setInvisible(false);
+        stand.setMarker(false);
         stand.setGravity(false);
         stand.setSilent(true);
         stand.setInvulnerable(true); // kann nicht zerstört werden
