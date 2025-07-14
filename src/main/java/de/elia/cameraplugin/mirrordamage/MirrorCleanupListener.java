@@ -6,11 +6,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import de.elia.cameraplugin.mirrordamage.VillagerMirrorManager;
+
 public class MirrorCleanupListener implements Listener {
 
-    private final ArmorStandMirrorManager manager;
+    private final VillagerMirrorManager manager;
 
-    public MirrorCleanupListener(ArmorStandMirrorManager manager) {
+    public MirrorCleanupListener(VillagerMirrorManager manager) {
         this.manager = manager;
     }
 

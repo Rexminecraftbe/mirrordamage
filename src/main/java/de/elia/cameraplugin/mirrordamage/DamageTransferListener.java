@@ -12,14 +12,14 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 
 /**
- * Transfers damage from mirror armor stands to their players
+ * Transfers damage from mirror villagers to their players
  * and prevents players from hurting themselves.
  */
 public class DamageTransferListener implements Listener {
 
-    private final ArmorStandMirrorManager mirrorManager;
+    private final VillagerMirrorManager mirrorManager;
 
-    public DamageTransferListener(ArmorStandMirrorManager mirrorManager) {
+    public DamageTransferListener(VillagerMirrorManager mirrorManager) {
         this.mirrorManager = mirrorManager;
     }
 
@@ -27,11 +27,11 @@ public class DamageTransferListener implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity target = event.getEntity();
 
-        // Mirror armor stand hit? Transfer damage to owning player.
-        if (target instanceof ArmorStand stand) {
-            Player owner = mirrorManager.getPlayer(stand);
+        // Mirror villager hit? Transfer damage to owning player.
+        if (target instanceof Villager mirror) {
+            Player owner = mirrorManager.getPlayer(mirror);
             if (owner != null) {
-                event.setCancelled(true); // keep stand intact
+                event.setCancelled(true); // keep villager intact
                 double damage = event.getFinalDamage();
                 owner.damage(damage, event.getDamager());
                 return;
@@ -58,13 +58,13 @@ public class DamageTransferListener implements Listener {
     }
 
     /**
-     * Transfer any damage the mirror armor stand receives to its player.
+     * Transfer any damage the mirror villager receives to its player.
      */
     @EventHandler
-    public void onArmorStandDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof ArmorStand stand)) return;
+    public void onMirrorDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Villager mirror)) return;
 
-        Player owner = mirrorManager.getPlayer(stand);
+        Player owner = mirrorManager.getPlayer(mirror);
         if (owner == null) return;
 
         event.setCancelled(true);
@@ -78,8 +78,8 @@ public class DamageTransferListener implements Listener {
     @EventHandler
     public void onPotionSplash(PotionSplashEvent event) {
         for (LivingEntity entity : event.getAffectedEntities()) {
-            if (!(entity instanceof ArmorStand stand)) continue;
-            Player owner = mirrorManager.getPlayer(stand);
+            if (!(entity instanceof Villager mirror)) continue;
+            Player owner = mirrorManager.getPlayer(mirror);
             if (owner == null) continue;
             double intensity = event.getIntensity(entity);
             for (PotionEffect effect : event.getPotion().getEffects()) {
@@ -98,9 +98,9 @@ public class DamageTransferListener implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         Entity hit = event.getHitEntity();
-        if (!(hit instanceof ArmorStand stand)) return;
+        if (!(hit instanceof Villager mirror)) return;
 
-        Player owner = mirrorManager.getPlayer(stand);
+        Player owner = mirrorManager.getPlayer(mirror);
         if (owner == null) return;
 
         Projectile projectile = event.getEntity();
