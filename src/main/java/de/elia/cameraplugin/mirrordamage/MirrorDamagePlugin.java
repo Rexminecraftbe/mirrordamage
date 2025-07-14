@@ -6,16 +6,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.elia.cameraplugin.mirrordamage.MirrorDamageCommand;
 import de.elia.cameraplugin.mirrordamage.MirrorCleanupListener;
 import de.elia.cameraplugin.mirrordamage.DamageTransferListener;
-import de.elia.cameraplugin.mirrordamage.ArmorStandMirrorManager;
+import de.elia.cameraplugin.mirrordamage.VillagerMirrorManager;
 
 public class MirrorDamagePlugin extends JavaPlugin {
 
-    private ArmorStandMirrorManager mirrorManager;
+    private VillagerMirrorManager mirrorManager;
 
     @Override
     public void onEnable() {
         // Manager instanziieren & Listener + Command registrieren
-        this.mirrorManager = new ArmorStandMirrorManager(this);
+        this.mirrorManager = new VillagerMirrorManager(this);
 
         getServer().getPluginManager().registerEvents(new DamageTransferListener(mirrorManager), this);
         getServer().getPluginManager().registerEvents(new MirrorCleanupListener(mirrorManager), this);
@@ -27,7 +27,7 @@ public class MirrorDamagePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Aufräumen: übrig gebliebene ArmorStands entfernen
+        // Aufräumen: übrig gebliebene Villager entfernen
         if (mirrorManager != null) mirrorManager.cleanup();
     }
 }

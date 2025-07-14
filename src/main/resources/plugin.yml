@@ -7,7 +7,7 @@ author: YourName
 commands:
   mirrordamage:
     aliases: md
-    description: Spawn/entfernt deinen Test‑ArmorStand
+    description: Spawn/entfernt deinen Test‑Villager
     usage: /<command>
 
 permissions:

@@ -5,14 +5,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import de.elia.cameraplugin.mirrordamage.VillagerMirrorManager;
+
 /**
- * Befehl /mirrordamage (Alias /md) – toggelt pro Spieler den Test‑ArmorStand.
+ * Befehl /mirrordamage (Alias /md) – toggelt pro Spieler den Test‑Villager.
  */
 public class MirrorDamageCommand implements CommandExecutor {
 
-    private final ArmorStandMirrorManager manager;
+    private final VillagerMirrorManager manager;
 
-    public MirrorDamageCommand(ArmorStandMirrorManager manager) {
+    public MirrorDamageCommand(VillagerMirrorManager manager) {
         this.manager = manager;
     }
 
@@ -24,10 +26,10 @@ public class MirrorDamageCommand implements CommandExecutor {
         }
 
         if (manager.removeMirror(p)) {
-            p.sendMessage("§aDein Test‑ArmorStand wurde entfernt.");
+            p.sendMessage("§aDein Test‑Villager wurde entfernt.");
         } else {
             manager.spawnMirror(p);
-            p.sendMessage("§aTest‑ArmorStand gespawnt – greif ihn an, um den Schaden zu prüfen!");
+            p.sendMessage("§aTest‑Villager gespawnt – greif ihn an, um den Schaden zu prüfen!");
         }
         return true;
     }
