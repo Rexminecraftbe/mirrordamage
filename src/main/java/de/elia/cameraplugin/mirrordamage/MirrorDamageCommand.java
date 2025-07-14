@@ -6,13 +6,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Befehl /damgesarmor – toggelt pro Spieler den Test‑ArmorStand.
+ * Befehl /mirrordamage (Alias /md) – toggelt pro Spieler den Test‑ArmorStand.
  */
-public class DamgesArmorCommand implements CommandExecutor {
+public class MirrorDamageCommand implements CommandExecutor {
 
     private final ArmorStandMirrorManager manager;
 
-    public DamgesArmorCommand(ArmorStandMirrorManager manager) {
+    public MirrorDamageCommand(ArmorStandMirrorManager manager) {
         this.manager = manager;
     }
 
