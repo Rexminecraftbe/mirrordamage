@@ -14,10 +14,13 @@ public class MirrorDamagePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        boolean damageArmor = getConfig().getBoolean("damage-armor", true);
+
         // Manager instanziieren & Listener + Command registrieren
         this.mirrorManager = new VillagerMirrorManager(this);
 
-        getServer().getPluginManager().registerEvents(new DamageTransferListener(mirrorManager), this);
+        getServer().getPluginManager().registerEvents(new DamageTransferListener(mirrorManager, damageArmor), this);
         getServer().getPluginManager().registerEvents(new MirrorCleanupListener(mirrorManager), this);
         // Command /mirrordamage (alias /md)
         getCommand("mirrordamage").setExecutor(new MirrorDamageCommand(mirrorManager));
