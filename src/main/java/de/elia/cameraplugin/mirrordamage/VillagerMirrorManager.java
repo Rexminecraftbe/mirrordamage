@@ -37,7 +37,11 @@ public class VillagerMirrorManager {
         villager.setInvisible(true);
         villager.setAI(false);
         villager.setSilent(true);
-        villager.setInvulnerable(true); // keep the villager alive
+        // The damage transfer listener cancels any incoming damage,
+        // so the villager doesn't need to be invulnerable. Keeping it
+        // vulnerable allows events like falling anvils to trigger and
+        // be redirected to the player.
+        villager.setInvulnerable(false);
 
         villager.getEquipment().setArmorContents(player.getInventory().getArmorContents());
 
