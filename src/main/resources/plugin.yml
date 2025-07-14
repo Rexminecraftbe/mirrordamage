@@ -5,11 +5,12 @@ api-version: 1.21
 author: YourName
 
 commands:
-  damgesarmor:
+  mirrordamage:
+    aliases: md
     description: Spawn/entfernt deinen Test‑ArmorStand
     usage: /<command>
 
 permissions:
   mirrordamage.toggle:
-    description: Erlaubt das Nutzen von /damgesarmor
+    description: Erlaubt das Nutzen von /mirrordamage
     default: true

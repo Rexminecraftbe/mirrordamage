@@ -28,6 +28,7 @@ public class ArmorStandMirrorManager {
         stand.setMarker(true);      // keine Hitbox
         stand.setGravity(false);
         stand.setSilent(true);
+        stand.setInvulnerable(true); // kann nicht zerstört werden
         // Rüstung kopieren
         stand.getEquipment().setArmorContents(player.getInventory().getArmorContents());
 
