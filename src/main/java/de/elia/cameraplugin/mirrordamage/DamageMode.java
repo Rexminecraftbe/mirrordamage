@@ -1,5 +1,6 @@
 package de.elia.cameraplugin.mirrordamage;
 
+
 /**
  * Available damage transfer modes.
  */
@@ -11,4 +12,3 @@ public enum DamageMode {
     /** No damage is transferred. */
     OFF
 }
-
