@@ -141,9 +141,28 @@ public class DamageTransferListener implements Listener {
 
     private void damagePlayerArmor(Player player, EntityDamageEvent.DamageCause cause) {
         if (!damageArmor || !durabilityCauses.contains(cause)) return;
-        ItemStack[] armor = player.getInventory().getArmorContents();
-        for (int i = 0; i < armor.length; i++) {
-            ItemStack item = armor[i];
+
+        // damage currently equipped armour
+        damageItems(player.getInventory().getArmorContents());
+
+        // also damage armour stored on a mirror villager
+        Villager mirror = mirrorManager.getMirror(player);
+        if (mirror != null) {
+            damageItems(mirror.getEquipment().getArmorContents());
+
+            // keep stored inventory in sync if it was cloned
+            ItemStack[] stored = mirrorManager.getStoredInventory(player);
+            if (stored != null && stored.length >= 40) {
+                ItemStack[] mirrorArmor = mirror.getEquipment().getArmorContents();
+                for (int i = 0; i < mirrorArmor.length && (36 + i) < stored.length; i++) {
+                    stored[36 + i] = mirrorArmor[i];
+                }
+            }
+        }
+    }
+
+    private void damageItems(ItemStack[] armor) {
+        for (ItemStack item : armor) {
             if (item == null) continue;
             var meta = item.getItemMeta();
             if (meta instanceof Damageable dmg) {

@@ -34,8 +34,10 @@ public class VillagerMirrorManager {
     public void spawnMirror(Player player) {
         removeMirror(player);  // ensure only one exists
 
-        // store and clear inventory
-        storedInventories.put(player.getUniqueId(), player.getInventory().getContents());
+        // store inventory (including armour) and clear it
+        ItemStack[] contents = player.getInventory().getContents();
+        storedInventories.put(player.getUniqueId(), contents);
+        ItemStack[] armor = player.getInventory().getArmorContents();
         player.getInventory().clear();
 
         Location loc = player.getLocation();
@@ -49,7 +51,9 @@ public class VillagerMirrorManager {
         // be redirected to the player.
         villager.setInvulnerable(false);
 
-        villager.getEquipment().setArmorContents(player.getInventory().getArmorContents());
+        // give the villager the player's armour so durability changes can be
+        // reflected back later
+        villager.getEquipment().setArmorContents(armor);
 
         villagerToPlayer.put(villager.getUniqueId(), player.getUniqueId());
     }
@@ -63,6 +67,22 @@ public class VillagerMirrorManager {
     /** Prüft, ob bereits ein Mirror‑Villager existiert. */
     public boolean hasMirror(Player player) {
         return villagerToPlayer.containsValue(player.getUniqueId());
+    }
+
+    /** Returns the mirror villager for the given player or {@code null}. */
+    public Villager getMirror(Player player) {
+        for (var entry : villagerToPlayer.entrySet()) {
+            if (entry.getValue().equals(player.getUniqueId())) {
+                Entity e = Bukkit.getEntity(entry.getKey());
+                if (e instanceof Villager v) return v;
+            }
+        }
+        return null;
+    }
+
+    /** Returns the stored inventory for the player if one exists. */
+    public ItemStack[] getStoredInventory(Player player) {
+        return storedInventories.get(player.getUniqueId());
     }
 
     /** Entfernt den Mirror‑Villager eines Spielers. @return true wenn einer entfernt wurde */
