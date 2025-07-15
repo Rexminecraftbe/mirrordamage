@@ -45,7 +45,7 @@ public class VillagerMirrorManager {
 
         Location loc = player.getLocation();
         Villager villager = player.getWorld().spawn(loc, Villager.class, v -> {
-            v.setInvisible(false);
+            v.setInvisible(true);
 
             // Setze Villager-Daten direkt beim Spawnen
             v.setVillagerType(Villager.Type.PLAINS);
@@ -67,7 +67,7 @@ public class VillagerMirrorManager {
             // so the villager doesn't need to be invulnerable. Keeping it
             // vulnerable allows events like falling anvils to trigger and
             // be redirected to the player.
-            v.setInvulnerable(true);
+            v.setInvulnerable(false);
 
             // Leere die Trades um Interaktionen zu verhindern
             v.setRecipes(new java.util.ArrayList<>());
