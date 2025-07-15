@@ -16,7 +16,7 @@ public class MirrorDamagePlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         boolean damageArmor = getConfig().getBoolean("damage-armor", true);
-        boolean villagerGravity = getConfig().getBoolean("villager-gravity", true);
+        boolean villagerGravity = true; // villager-gravity is now always enabled
         // Manager instanziieren & Listener + Command registrieren
         this.mirrorManager = new VillagerMirrorManager(this, villagerGravity);
 
