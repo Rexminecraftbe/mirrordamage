@@ -45,6 +45,7 @@ public class VillagerMirrorManager {
         Villager villager = (Villager) player.getWorld().spawnEntity(loc, EntityType.VILLAGER);
         villager.setInvisible(true);
         villager.setAI(false);
+        villager.setGravity(true); // allow falling and water movement
         villager.setSilent(true);
         // The damage transfer listener cancels any incoming damage,
         // so the villager doesn't need to be invulnerable. Keeping it
