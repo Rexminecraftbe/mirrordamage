@@ -13,4 +13,4 @@ commands:
 permissions:
   mirrordamage.toggle:
     description: Erlaubt das Nutzen von /mirrordamage
-    default: trues
+    default: true

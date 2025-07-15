@@ -51,10 +51,15 @@ public class DamageTransferListener implements Listener {
                 // Transfer potion effects from tipped arrows
                 Entity damager = event.getDamager();
                 if (damager instanceof Arrow arrow) {
-                    arrow.getBasePotionType().getPotionEffects()
-                            .forEach(effect -> owner.addPotionEffect(effect, true));
-                    arrow.getCustomEffects()
-                            .forEach(effect -> owner.addPotionEffect(effect, true));
+                    var baseType = arrow.getBasePotionType();
+                    if (baseType != null) {
+                        baseType.getPotionEffects()
+                                .forEach(effect -> owner.addPotionEffect(effect, true));
+                    }
+                    var customEffects = arrow.getCustomEffects();
+                    if (customEffects != null) {
+                        customEffects.forEach(effect -> owner.addPotionEffect(effect, true));
+                    }
                 }
 
                 double damage = event.getFinalDamage();
@@ -141,10 +146,15 @@ public class DamageTransferListener implements Listener {
 
         Projectile projectile = event.getEntity();
         if (projectile instanceof Arrow arrow) {
-            arrow.getBasePotionType().getPotionEffects()
-                    .forEach(effect -> owner.addPotionEffect(effect, true));
-            arrow.getCustomEffects()
-                    .forEach(effect -> owner.addPotionEffect(effect, true));
+            var baseType = arrow.getBasePotionType();
+            if (baseType != null) {
+                baseType.getPotionEffects()
+                        .forEach(effect -> owner.addPotionEffect(effect, true));
+            }
+            var customEffects = arrow.getCustomEffects();
+            if (customEffects != null) {
+                customEffects.forEach(effect -> owner.addPotionEffect(effect, true));
+            }
 
             // Also mirror arrow damage to the player and damage armour
             double damage = arrow.getDamage();
