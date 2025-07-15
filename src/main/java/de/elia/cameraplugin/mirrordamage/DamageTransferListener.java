@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.enchantments.Enchantment;
+import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
@@ -216,10 +218,18 @@ public class DamageTransferListener implements Listener {
             if (item.getType() == Material.ELYTRA) continue; // Elytra worn by the villager should not lose durability
             var meta = item.getItemMeta();
             if (meta instanceof Damageable dmg) {
-                dmg.setDamage(dmg.getDamage() + 1);
-                item.setItemMeta(meta);
-                armor[i] = item;
-                changed = true;
+                boolean applyDamage = true;
+                int unbreaking = item.getEnchantmentLevel(Enchantment.UNBREAKING);
+                if (unbreaking > 0) {
+                    double chance = (60.0 + 40.0 / (unbreaking + 1)) / 100.0; // probability to take durability damage
+                    applyDamage = ThreadLocalRandom.current().nextDouble() < chance;
+                }
+                if (applyDamage) {
+                    dmg.setDamage(dmg.getDamage() + 1);
+                    item.setItemMeta(meta);
+                    armor[i] = item;
+                    changed = true;
+                }
             }
         }
         return changed;
