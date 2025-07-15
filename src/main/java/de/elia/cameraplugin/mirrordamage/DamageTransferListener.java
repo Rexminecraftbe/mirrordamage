@@ -12,6 +12,8 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.event.entity.EntityTransformEvent;
+import org.bukkit.entity.Witch;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -130,6 +132,22 @@ public class DamageTransferListener implements Listener {
             if (attacker != null && attacker.getUniqueId().equals(victim.getUniqueId())) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    /**
+     * Prevent mirror villagers from turning into witches when struck by lightning.
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onVillagerTransform(EntityTransformEvent event) {
+        if (!(event.getEntity() instanceof Villager villager)) return;
+
+        // only apply to mirror villagers
+        if (mirrorManager.getPlayer(villager) == null) return;
+
+        if (event.getTransformReason() == EntityTransformEvent.TransformReason.LIGHTNING &&
+                event.getTransformedEntity() instanceof Witch) {
+            event.setCancelled(true);
         }
     }
 
