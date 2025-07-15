@@ -1,1 +1,9 @@
 damage-armor: true
+villager-wears-armor: true
+
+# mirror | custom | false
+damage-mode: mirror
+
+# Only used when damage-mode is custom
+custom-damage-hearts: 0.5
+custom-armor-damage: 1

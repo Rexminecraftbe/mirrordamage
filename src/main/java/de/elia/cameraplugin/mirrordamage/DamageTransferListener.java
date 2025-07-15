@@ -15,9 +15,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.enchantments.Enchantment;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.EnumSet;
+import de.elia.cameraplugin.mirrordamage.DamageMode;
 
 /**
  * Transfers damage from mirror villagers to their players
@@ -27,6 +26,9 @@ public class DamageTransferListener implements Listener {
 
     private final VillagerMirrorManager mirrorManager;
     private final boolean damageArmor;
+    private final DamageMode damageMode;
+    private final double customDamageHearts;
+    private final int customArmorDamage;
     private final EnumSet<EntityDamageEvent.DamageCause> durabilityCauses = EnumSet.of(
             EntityDamageEvent.DamageCause.ENTITY_ATTACK,
             EntityDamageEvent.DamageCause.PROJECTILE,
@@ -65,9 +67,13 @@ public class DamageTransferListener implements Listener {
 
     );
 
-    public DamageTransferListener(VillagerMirrorManager mirrorManager, boolean damageArmor) {
+    public DamageTransferListener(VillagerMirrorManager mirrorManager, boolean damageArmor,
+                                  DamageMode damageMode, double customDamageHearts, int customArmorDamage) {
         this.mirrorManager = mirrorManager;
         this.damageArmor = damageArmor;
+        this.damageMode = damageMode;
+        this.customDamageHearts = customDamageHearts;
+        this.customArmorDamage = customArmorDamage < 0 ? 0 : customArmorDamage;
     }
 
     @EventHandler
@@ -95,8 +101,15 @@ public class DamageTransferListener implements Listener {
                 }
 
                 double damage = event.getFinalDamage();
-                owner.damage(damage, damager);
-                damagePlayerArmor(owner, event.getCause());
+                double apply = 0;
+                int armorDmg = 0;
+                switch (damageMode) {
+                    case MIRROR -> { apply = damage; armorDmg = 1; }
+                    case CUSTOM -> { apply = customDamageHearts * 2.0; armorDmg = customArmorDamage; }
+                    case OFF -> { apply = 0; armorDmg = 0; }
+                }
+                if (apply > 0) owner.damage(apply, damager);
+                damagePlayerArmor(owner, event.getCause(), armorDmg);
                 return;
             }
         }
@@ -152,8 +165,17 @@ public class DamageTransferListener implements Listener {
 
         event.setCancelled(true);
         DamageSource source = event.getDamageSource();
-        owner.damage(event.getFinalDamage(), source);
-        damagePlayerArmor(owner, event.getCause());
+
+        double incoming = event.getFinalDamage();
+        double apply = 0;
+        int armorDmg = 0;
+        switch (damageMode) {
+            case MIRROR -> { apply = incoming; armorDmg = 1; }
+            case CUSTOM -> { apply = customDamageHearts * 2.0; armorDmg = customArmorDamage; }
+            case OFF -> { apply = 0; armorDmg = 0; }
+        }
+        if (apply > 0) owner.damage(apply, source);
+        damagePlayerArmor(owner, event.getCause(), armorDmg);
     }
 
     /**
@@ -203,16 +225,24 @@ public class DamageTransferListener implements Listener {
             double damage = arrow.getDamage();
             ProjectileSource shooter = arrow.getShooter();
             Entity damager = shooter instanceof Entity ent ? ent : arrow;
-            owner.damage(damage, damager);
-            damagePlayerArmor(owner, EntityDamageEvent.DamageCause.PROJECTILE);
+
+            double apply = 0;
+            int armorDmg = 0;
+            switch (damageMode) {
+                case MIRROR -> { apply = damage; armorDmg = 1; }
+                case CUSTOM -> { apply = customDamageHearts * 2.0; armorDmg = customArmorDamage; }
+                case OFF -> { apply = 0; armorDmg = 0; }
+            }
+            if (apply > 0) owner.damage(apply, damager);
+            damagePlayerArmor(owner, EntityDamageEvent.DamageCause.PROJECTILE, armorDmg);
         }
     }
 
-    private void damagePlayerArmor(Player player, EntityDamageEvent.DamageCause cause) {
-        if (!damageArmor || !durabilityCauses.contains(cause)) return;
+    private void damagePlayerArmor(Player player, EntityDamageEvent.DamageCause cause, int amount) {
+        if (!damageArmor || !durabilityCauses.contains(cause) || amount <= 0) return;
         // damage currently equipped armour (when players regain it later)
         ItemStack[] playerArmor = player.getInventory().getArmorContents();
-        if (damageItems(playerArmor)) {
+        if (damageItems(playerArmor, amount)) {
             player.getInventory().setArmorContents(playerArmor);
         }
 
@@ -220,7 +250,7 @@ public class DamageTransferListener implements Listener {
         Villager mirror = mirrorManager.getMirror(player);
         if (mirror != null) {
             ItemStack[] mirrorArmor = mirror.getEquipment().getArmorContents();
-            if (damageItems(mirrorArmor)) {
+            if (damageItems(mirrorArmor, amount)) {
                 mirror.getEquipment().setArmorContents(mirrorArmor);
             }
 
@@ -239,7 +269,7 @@ public class DamageTransferListener implements Listener {
      *
      * @return {@code true} if any item was modified
      */
-    private boolean damageItems(ItemStack[] armor) {
+    private boolean damageItems(ItemStack[] armor, int amount) {
         boolean changed = false;
         for (int i = 0; i < armor.length; i++) {
             ItemStack item = armor[i];
@@ -247,17 +277,21 @@ public class DamageTransferListener implements Listener {
             if (item.getType() == Material.ELYTRA) continue; // Elytra worn by the villager should not lose durability
             var meta = item.getItemMeta();
             if (meta instanceof Damageable dmg) {
-                boolean applyDamage = true;
-                int unbreaking = item.getEnchantmentLevel(Enchantment.UNBREAKING);
-                if (unbreaking > 0) {
-                    double chance = (60.0 + 40.0 / (unbreaking + 1)) / 100.0; // probability to take durability damage
-                    applyDamage = ThreadLocalRandom.current().nextDouble() < chance;
+                for (int d = 0; d < amount; d++) {
+                    boolean applyDamage = true;
+                    int unbreaking = item.getEnchantmentLevel(Enchantment.UNBREAKING);
+                    if (unbreaking > 0) {
+                        double chance = (60.0 + 40.0 / (unbreaking + 1)) / 100.0;
+                        applyDamage = ThreadLocalRandom.current().nextDouble() < chance;
+                    }
+                    if (applyDamage) {
+                        dmg.setDamage(dmg.getDamage() + 1);
+                        changed = true;
+                    }
                 }
-                if (applyDamage) {
-                    dmg.setDamage(dmg.getDamage() + 1);
+                if (changed) {
                     item.setItemMeta(meta);
                     armor[i] = item;
-                    changed = true;
                 }
             }
         }

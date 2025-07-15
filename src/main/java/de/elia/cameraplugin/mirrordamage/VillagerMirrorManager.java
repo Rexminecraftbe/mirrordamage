@@ -23,9 +23,11 @@ public class VillagerMirrorManager {
     private final Plugin plugin;
     private final Map<UUID, UUID> villagerToPlayer = new HashMap<>();
     private final Map<UUID, ItemStack[]> storedInventories = new HashMap<>();
+    private final boolean villagerWearsArmor;
 
-    public VillagerMirrorManager(Plugin plugin, boolean villagerGravity) {
+    public VillagerMirrorManager(Plugin plugin, boolean villagerGravity, boolean villagerWearsArmor) {
         this.plugin = plugin;
+        this.villagerWearsArmor = villagerWearsArmor;
     }
 
     /**
@@ -72,7 +74,9 @@ public class VillagerMirrorManager {
 
             // give the villager the player's armour so durability changes can be
             // reflected back later
-            v.getEquipment().setArmorContents(armor);
+            if (villagerWearsArmor) {
+                v.getEquipment().setArmorContents(armor);
+            }
         });
 
         villagerToPlayer.put(villager.getUniqueId(), player.getUniqueId());
