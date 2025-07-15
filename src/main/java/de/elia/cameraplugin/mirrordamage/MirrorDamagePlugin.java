@@ -7,7 +7,6 @@ import de.elia.cameraplugin.mirrordamage.MirrorDamageCommand;
 import de.elia.cameraplugin.mirrordamage.MirrorCleanupListener;
 import de.elia.cameraplugin.mirrordamage.DamageTransferListener;
 import de.elia.cameraplugin.mirrordamage.VillagerMirrorManager;
-import de.elia.cameraplugin.mirrordamage.VillagerJobBlockListener;
 
 public class MirrorDamagePlugin extends JavaPlugin {
 
@@ -23,7 +22,6 @@ public class MirrorDamagePlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new DamageTransferListener(mirrorManager, damageArmor), this);
         getServer().getPluginManager().registerEvents(new MirrorCleanupListener(mirrorManager), this);
-        getServer().getPluginManager().registerEvents(new VillagerJobBlockListener(mirrorManager), this);
         // Command /mirrordamage (alias /md)
         getCommand("mirrordamage").setExecutor(new MirrorDamageCommand(mirrorManager));
 

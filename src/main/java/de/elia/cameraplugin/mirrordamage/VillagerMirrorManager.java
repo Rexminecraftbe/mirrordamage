@@ -44,14 +44,16 @@ public class VillagerMirrorManager {
 
         Location loc = player.getLocation();
         Villager villager = (Villager) player.getWorld().spawnEntity(loc, EntityType.VILLAGER);
-        villager.setInvisible(true);
+        villager.setInvisible(false);
         // Enable AI so gravity and water flow apply, but freeze the villager
         // by setting its movement speed to zero.
         villager.setAI(true);
         // Use GENERIC_MOVEMENT_SPEED which controls how fast a mob can move.
         var speedAttr = villager.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED);
         if (speedAttr != null) speedAttr.setBaseValue(0.0);
-        villager.setProfession(Villager.Profession.NITWIT); // prevents job acquisition
+        // Give the mirror villager a profession but block all interaction
+        // so players cannot trade with it.
+        villager.setProfession(Villager.Profession.FISHERMAN);
         villager.setGravity(true); // allow falling and water movement
         villager.setSilent(true);
         // The damage transfer listener cancels any incoming damage,
