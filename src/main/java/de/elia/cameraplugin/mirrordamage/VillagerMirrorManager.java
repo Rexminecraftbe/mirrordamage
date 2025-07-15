@@ -23,7 +23,7 @@ public class VillagerMirrorManager {
     private final Map<UUID, UUID> villagerToPlayer = new HashMap<>();
     private final Map<UUID, ItemStack[]> storedInventories = new HashMap<>();
 
-    public VillagerMirrorManager(Plugin plugin) {
+    public VillagerMirrorManager(Plugin plugin, boolean villagerGravity) {
         this.plugin = plugin;
     }
 
@@ -44,7 +44,12 @@ public class VillagerMirrorManager {
         Location loc = player.getLocation();
         Villager villager = (Villager) player.getWorld().spawnEntity(loc, EntityType.VILLAGER);
         villager.setInvisible(true);
-        villager.setAI(false);
+        // Enable AI so gravity and water flow apply, but freeze the villager
+        // by setting its movement speed to zero.
+        villager.setAI(true);
+        // Use GENERIC_MOVEMENT_SPEED which controls how fast a mob can move.
+        var speedAttr = villager.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED);
+        if (speedAttr != null) speedAttr.setBaseValue(0.0);
         villager.setGravity(true); // allow falling and water movement
         villager.setSilent(true);
         // The damage transfer listener cancels any incoming damage,
