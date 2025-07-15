@@ -86,9 +86,13 @@ public class DamageTransferListener implements Listener {
     /**
      * Transfer any damage the mirror villager receives to its player.
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onMirrorDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Villager mirror)) return;
+
+        // Entity-caused damage is handled in onEntityDamageByEntity to avoid
+        // double armour durability loss.
+        if (event instanceof EntityDamageByEntityEvent) return;
 
         Player owner = mirrorManager.getPlayer(mirror);
         if (owner == null) return;
