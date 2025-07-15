@@ -97,6 +97,11 @@ public class DamageTransferListener implements Listener {
         Player owner = mirrorManager.getPlayer(mirror);
         if (owner == null) return;
 
+
+        // Entity-caused damage is handled in onEntityDamageByEntity to avoid
+        // double armour durability loss.
+        if (event instanceof EntityDamageByEntityEvent) return;
+
         event.setCancelled(true);
         DamageSource source = event.getDamageSource();
         owner.damage(event.getFinalDamage(), source);
