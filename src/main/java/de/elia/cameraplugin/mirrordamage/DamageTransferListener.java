@@ -15,6 +15,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.enchantments.Enchantment;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.EnumSet;
 
 /**
