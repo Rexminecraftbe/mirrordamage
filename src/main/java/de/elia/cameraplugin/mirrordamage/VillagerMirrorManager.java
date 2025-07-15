@@ -9,6 +9,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -50,6 +51,7 @@ public class VillagerMirrorManager {
         // Use GENERIC_MOVEMENT_SPEED which controls how fast a mob can move.
         var speedAttr = villager.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED);
         if (speedAttr != null) speedAttr.setBaseValue(0.0);
+        villager.setProfession(Villager.Profession.NITWIT); // prevents job acquisition
         villager.setGravity(true); // allow falling and water movement
         villager.setSilent(true);
         // The damage transfer listener cancels any incoming damage,
