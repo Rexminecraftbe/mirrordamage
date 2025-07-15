@@ -41,26 +41,34 @@ public class VillagerMirrorManager {
         ItemStack[] armor = player.getInventory().getArmorContents();
         player.getInventory().clear();
 
-
         Location loc = player.getLocation();
         Villager villager = player.getWorld().spawn(loc, Villager.class, v -> {
             v.setInvisible(false);
+
+            // Setze Villager-Daten direkt beim Spawnen
+            v.setVillagerType(Villager.Type.PLAINS);
+            v.setProfession(Villager.Profession.FISHERMAN);
+            v.setVillagerLevel(2);
+
             // Enable AI so gravity and water flow apply, but freeze the villager
             // by setting its movement speed to zero.
             v.setAI(true);
             // Use GENERIC_MOVEMENT_SPEED which controls how fast a mob can move.
             var speedAttr = v.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED);
             if (speedAttr != null) speedAttr.setBaseValue(0.0);
-            // Give the mirror villager a profession but block all interaction
-            // so players cannot trade with it.
-            v.setProfession(Villager.Profession.FISHERMAN);
+
             v.setGravity(true); // allow falling and water movement
             v.setSilent(true);
+            v.setPersistent(true); // entspricht PersistenceRequired:1b
+
             // The damage transfer listener cancels any incoming damage,
             // so the villager doesn't need to be invulnerable. Keeping it
             // vulnerable allows events like falling anvils to trigger and
             // be redirected to the player.
             v.setInvulnerable(false);
+
+            // Leere die Trades um Interaktionen zu verhindern
+            v.setRecipes(new java.util.ArrayList<>());
 
             // give the villager the player's armour so durability changes can be
             // reflected back later
