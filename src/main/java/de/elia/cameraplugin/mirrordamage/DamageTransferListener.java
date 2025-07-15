@@ -145,6 +145,13 @@ public class DamageTransferListener implements Listener {
                     .forEach(effect -> owner.addPotionEffect(effect, true));
             arrow.getCustomEffects()
                     .forEach(effect -> owner.addPotionEffect(effect, true));
+
+            // Also mirror arrow damage to the player and damage armour
+            double damage = arrow.getDamage();
+            ProjectileSource shooter = arrow.getShooter();
+            Entity damager = shooter instanceof Entity ent ? ent : arrow;
+            owner.damage(damage, damager);
+            damagePlayerArmor(owner, EntityDamageEvent.DamageCause.PROJECTILE);
         }
     }
 
