@@ -35,7 +35,34 @@ public class DamageTransferListener implements Listener {
             EntityDamageEvent.DamageCause.FIRE,
             EntityDamageEvent.DamageCause.FIRE_TICK,
             EntityDamageEvent.DamageCause.HOT_FLOOR,
-            EntityDamageEvent.DamageCause.FALL
+            EntityDamageEvent.DamageCause.FALL,
+            EntityDamageEvent.DamageCause.LAVA,
+            EntityDamageEvent.DamageCause.CONTACT,
+            EntityDamageEvent.DamageCause.CAMPFIRE,
+            EntityDamageEvent.DamageCause.FALLING_BLOCK,
+            EntityDamageEvent.DamageCause.FREEZE,
+            EntityDamageEvent.DamageCause.PROJECTILE,
+            EntityDamageEvent.DamageCause.CRAMMING,
+            EntityDamageEvent.DamageCause.CUSTOM,
+            EntityDamageEvent.DamageCause.DRAGON_BREATH,
+            EntityDamageEvent.DamageCause.DROWNING,
+            EntityDamageEvent.DamageCause.DRYOUT,
+            EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK,
+            EntityDamageEvent.DamageCause.FLY_INTO_WALL,
+            EntityDamageEvent.DamageCause.KILL,
+            EntityDamageEvent.DamageCause.LIGHTNING,
+            EntityDamageEvent.DamageCause.MAGIC,
+            EntityDamageEvent.DamageCause.MELTING,
+            EntityDamageEvent.DamageCause.POISON,
+            EntityDamageEvent.DamageCause.SONIC_BOOM,
+            EntityDamageEvent.DamageCause.STARVATION,
+            EntityDamageEvent.DamageCause.SUFFOCATION,
+            EntityDamageEvent.DamageCause.SUICIDE,
+            EntityDamageEvent.DamageCause.THORNS,
+            EntityDamageEvent.DamageCause.VOID,
+            EntityDamageEvent.DamageCause.WITHER,
+            EntityDamageEvent.DamageCause.WORLD_BORDER
+
     );
 
     public DamageTransferListener(VillagerMirrorManager mirrorManager, boolean damageArmor) {
