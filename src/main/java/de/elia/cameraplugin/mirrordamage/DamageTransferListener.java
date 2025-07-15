@@ -142,18 +142,23 @@ public class DamageTransferListener implements Listener {
     private void damagePlayerArmor(Player player, EntityDamageEvent.DamageCause cause) {
         if (!damageArmor || !durabilityCauses.contains(cause)) return;
 
-        // damage currently equipped armour
-        damageItems(player.getInventory().getArmorContents());
+        // damage currently equipped armour (when players regain it later)
+        ItemStack[] playerArmor = player.getInventory().getArmorContents();
+        if (damageItems(playerArmor)) {
+            player.getInventory().setArmorContents(playerArmor);
+        }
 
         // also damage armour stored on a mirror villager
         Villager mirror = mirrorManager.getMirror(player);
         if (mirror != null) {
-            damageItems(mirror.getEquipment().getArmorContents());
+            ItemStack[] mirrorArmor = mirror.getEquipment().getArmorContents();
+            if (damageItems(mirrorArmor)) {
+                mirror.getEquipment().setArmorContents(mirrorArmor);
+            }
 
             // keep stored inventory in sync if it was cloned
             ItemStack[] stored = mirrorManager.getStoredInventory(player);
             if (stored != null && stored.length >= 40) {
-                ItemStack[] mirrorArmor = mirror.getEquipment().getArmorContents();
                 for (int i = 0; i < mirrorArmor.length && (36 + i) < stored.length; i++) {
                     stored[36 + i] = mirrorArmor[i];
                 }
@@ -161,14 +166,24 @@ public class DamageTransferListener implements Listener {
         }
     }
 
-    private void damageItems(ItemStack[] armor) {
-        for (ItemStack item : armor) {
+    /**
+     * Damages the provided armour contents by one durability point each.
+     *
+     * @return {@code true} if any item was modified
+     */
+    private boolean damageItems(ItemStack[] armor) {
+        boolean changed = false;
+        for (int i = 0; i < armor.length; i++) {
+            ItemStack item = armor[i];
             if (item == null) continue;
             var meta = item.getItemMeta();
             if (meta instanceof Damageable dmg) {
                 dmg.setDamage(dmg.getDamage() + 1);
                 item.setItemMeta(meta);
+                armor[i] = item;
+                changed = true;
             }
         }
+        return changed;
     }
 }
