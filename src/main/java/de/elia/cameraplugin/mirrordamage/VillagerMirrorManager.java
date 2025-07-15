@@ -65,7 +65,7 @@ public class VillagerMirrorManager {
             // so the villager doesn't need to be invulnerable. Keeping it
             // vulnerable allows events like falling anvils to trigger and
             // be redirected to the player.
-            v.setInvulnerable(false);
+            v.setInvulnerable(true);
 
             // Leere die Trades um Interaktionen zu verhindern
             v.setRecipes(new java.util.ArrayList<>());

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import java.util.EnumSet;
@@ -98,6 +99,17 @@ public class DamageTransferListener implements Listener {
         // Entity-caused damage is handled in onEntityDamageByEntity to avoid
         // double armour durability loss.
         if (event instanceof EntityDamageByEntityEvent) return;
+
+        // prevent drowning when wearing a turtle helmet
+        if (event.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+            ItemStack helmet = mirror.getEquipment().getHelmet();
+            if (helmet != null && helmet.getType() == Material.TURTLE_HELMET) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+
 
         Player owner = mirrorManager.getPlayer(mirror);
         if (owner == null) return;
@@ -201,6 +213,7 @@ public class DamageTransferListener implements Listener {
         for (int i = 0; i < armor.length; i++) {
             ItemStack item = armor[i];
             if (item == null) continue;
+            if (item.getType() == Material.ELYTRA) continue; // Elytra worn by the villager should not lose durability
             var meta = item.getItemMeta();
             if (meta instanceof Damageable dmg) {
                 dmg.setDamage(dmg.getDamage() + 1);
