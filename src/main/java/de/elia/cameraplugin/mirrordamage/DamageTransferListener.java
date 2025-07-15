@@ -28,6 +28,7 @@ public class DamageTransferListener implements Listener {
 
     private final VillagerMirrorManager mirrorManager;
     private final boolean damageArmor;
+    private final boolean villagerWearsArmor;
     private final DamageMode damageMode;
     private final double customDamageHearts;
     private final int customArmorDamage;
@@ -73,6 +74,7 @@ public class DamageTransferListener implements Listener {
                                   DamageMode damageMode, double customDamageHearts, int customArmorDamage) {
         this.mirrorManager = mirrorManager;
         this.damageArmor = damageArmor;
+        this.villagerWearsArmor = mirrorManager.villagerWearsArmor();
         this.damageMode = damageMode;
         this.customDamageHearts = customDamageHearts;
         this.customArmorDamage = customArmorDamage < 0 ? 0 : customArmorDamage;
@@ -263,6 +265,8 @@ public class DamageTransferListener implements Listener {
         if (damageItems(playerArmor, amount)) {
             player.getInventory().setArmorContents(playerArmor);
         }
+
+        if (!villagerWearsArmor) return;
 
         // also damage armour stored on a mirror villager
         Villager mirror = mirrorManager.getMirror(player);

@@ -30,6 +30,11 @@ public class VillagerMirrorManager {
         this.villagerWearsArmor = villagerWearsArmor;
     }
 
+    /** Returns whether mirror villagers should wear the player's armour. */
+    public boolean villagerWearsArmor() {
+        return villagerWearsArmor;
+    }
+
     /**
      * Spawns (or replaces) an invisible, no-AI villager that mirrors the
      * player's armour.
