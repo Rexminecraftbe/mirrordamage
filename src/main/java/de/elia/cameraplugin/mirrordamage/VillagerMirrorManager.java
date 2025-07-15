@@ -40,6 +40,7 @@ public class VillagerMirrorManager {
         ItemStack[] armor = player.getInventory().getArmorContents();
         player.getInventory().clear();
 
+
         Location loc = player.getLocation();
         Villager villager = (Villager) player.getWorld().spawnEntity(loc, EntityType.VILLAGER);
         villager.setInvisible(true);

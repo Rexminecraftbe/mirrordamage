@@ -1,19 +1,16 @@
 name: MirrorDamage
 main: de.elia.cameraplugin.mirrordamage.MirrorDamagePlugin
-version: 1.2.0 # Version erhöhen ist gute Praxis
+version: 1.1.0
 api-version: 1.21
 author: YourName
 
 commands:
-  damgesarmor:
-    description: Spawn/entfernt deinen Test-ArmorStand
+  mirrordamage:
+    aliases: md
+    description: Spawn/entfernt deinen Test‑Villager
     usage: /<command>
-  mirrordamage: # NEUER BEFEHL
-    description: Schaltet den Schadenstransfer für deinen Test-ArmorStand an/aus.
-    usage: /<command>
-    aliases: [md] # optionaler Alias
 
 permissions:
   mirrordamage.toggle:
-    description: Erlaubt das Nutzen von /damgesarmor und /mirrordamage
-    default: true
+    description: Erlaubt das Nutzen von /mirrordamage
+    default: trues
