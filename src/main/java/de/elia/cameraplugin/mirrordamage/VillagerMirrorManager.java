@@ -43,28 +43,29 @@ public class VillagerMirrorManager {
 
 
         Location loc = player.getLocation();
-        Villager villager = (Villager) player.getWorld().spawnEntity(loc, EntityType.VILLAGER);
-        villager.setInvisible(false);
-        // Enable AI so gravity and water flow apply, but freeze the villager
-        // by setting its movement speed to zero.
-        villager.setAI(true);
-        // Use GENERIC_MOVEMENT_SPEED which controls how fast a mob can move.
-        var speedAttr = villager.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED);
-        if (speedAttr != null) speedAttr.setBaseValue(0.0);
-        // Give the mirror villager a profession but block all interaction
-        // so players cannot trade with it.
-        villager.setProfession(Villager.Profession.FISHERMAN);
-        villager.setGravity(true); // allow falling and water movement
-        villager.setSilent(true);
-        // The damage transfer listener cancels any incoming damage,
-        // so the villager doesn't need to be invulnerable. Keeping it
-        // vulnerable allows events like falling anvils to trigger and
-        // be redirected to the player.
-        villager.setInvulnerable(false);
+        Villager villager = player.getWorld().spawn(loc, Villager.class, v -> {
+            v.setInvisible(false);
+            // Enable AI so gravity and water flow apply, but freeze the villager
+            // by setting its movement speed to zero.
+            v.setAI(true);
+            // Use GENERIC_MOVEMENT_SPEED which controls how fast a mob can move.
+            var speedAttr = v.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED);
+            if (speedAttr != null) speedAttr.setBaseValue(0.0);
+            // Give the mirror villager a profession but block all interaction
+            // so players cannot trade with it.
+            v.setProfession(Villager.Profession.FISHERMAN);
+            v.setGravity(true); // allow falling and water movement
+            v.setSilent(true);
+            // The damage transfer listener cancels any incoming damage,
+            // so the villager doesn't need to be invulnerable. Keeping it
+            // vulnerable allows events like falling anvils to trigger and
+            // be redirected to the player.
+            v.setInvulnerable(false);
 
-        // give the villager the player's armour so durability changes can be
-        // reflected back later
-        villager.getEquipment().setArmorContents(armor);
+            // give the villager the player's armour so durability changes can be
+            // reflected back later
+            v.getEquipment().setArmorContents(armor);
+        });
 
         villagerToPlayer.put(villager.getUniqueId(), player.getUniqueId());
     }
